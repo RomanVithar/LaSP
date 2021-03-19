@@ -12,7 +12,7 @@
 
 - task 5a - is made
 
-- task 5b - is made 
+- task 5b - is passed  
 
 # Task description
 
