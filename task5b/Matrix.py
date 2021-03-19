@@ -10,7 +10,7 @@ class Matrix:
         self.dj = 1
         self.exit_count = len(self.matrix) * len(self.matrix[0])
         return self
-
+# паттерн стратегия для di и dj. 
     def __next__(self):
         if self.exit_count < 2:
             raise StopIteration
@@ -18,13 +18,13 @@ class Matrix:
         if self.dj > 0 and self.j == len(self.matrix) - self.indent-1:
             self.dj = 0
             self.di = 1
-        if self.di > 0 and self.i == len(self.matrix) - self.indent-1:
+        elif self.di > 0 and self.i == len(self.matrix) - self.indent-1:
             self.di = 0
             self.dj = -1
-        if self.dj < 0 and self.j == self.indent:
+        elif self.dj < 0 and self.j == self.indent:
             self.dj = 0
             self.di = -1
-        if self.di < 0 and self.i == self.indent+1:
+        elif self.di < 0 and self.i == self.indent+1:
             self.di = 0
             self.dj = 1
             self.indent +=1
