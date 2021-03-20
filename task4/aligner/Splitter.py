@@ -6,7 +6,7 @@ class Splitter:
         self.stop_iter = False
 
     def __iter__(self):
-        return self
+        return Splitter(self.str)
 
     def __next__(self):
         if self.stop_iter:

@@ -8,11 +8,13 @@
 
 - task 3 - is passed
 
-- task 4 - is made
+- task 4 - is passed
 
-- task 5a - is made
+- task 5a - is passed
 
 - task 5b - is passed  
+
+- task 6 - is select(28.скобан, task about moving the boxes)
 
 # Task description
 
@@ -29,6 +31,3 @@ Task - 5b
 Сделать генератор и итератор для одного из прошлых тасков
 
 # Read before surrender
-
-The task 4 don't work with text which have not english symbols!!!! Fixe that it is possible if tune
-the python interpreter on other symbols. Doing that with command or with tunning something.

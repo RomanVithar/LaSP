@@ -7,18 +7,18 @@ class Formater:
         self.width = width
         self.splitter = Splitter(self.str)
         self.was_n = True
-        self.buffer = '' 
+        self.buffer = ''
         self.stop_iter = False
 
     def __iter__(self):
-       return self
+        return self
 
     def add_spaces(self, list, free_space):
         if list[0] == '      ':
             if len(list) == 1:
                 return list[0]
             else:
-                list[0]+= list[1]
+                list[0] += list[1]
                 del list[1]
         if len(list) == 1:
             return list[0]
@@ -35,24 +35,24 @@ class Formater:
     def __next__(self):
         if self.stop_iter and not self.buffer:
             raise StopIteration
-        list_words= list() 
-        free_space = self.width 
+        list_words = list()
+        free_space = self.width
         if self.buffer:
             if len(self.buffer) > self.width:
-                t =  self.buffer[:self.width]
+                t = self.buffer[:self.width]
                 self.buffer = self.buffer[self.width:len(self.buffer)]
-                return t 
+                return t
             else:
-                list_words.append(self.buffer) 
-                free_space -= len(self.buffer) +1
+                list_words.append(self.buffer)
+                free_space -= len(self.buffer) + 1
                 self.buffer = ''
         if self.was_n:
             if len(list_words) != 0:
                 return list_words[0]
             self.was_n = False
-            if self.width<6:
-                self.buffer += ' ' * (6- self.width)
-                return ' '* self.width
+            if self.width < 6:
+                self.buffer += ' ' * (6 - self.width)
+                return ' ' * self.width
             else:
                 list_words.append('      ')
                 free_space -= 6
