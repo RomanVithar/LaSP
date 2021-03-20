@@ -1,11 +1,11 @@
 class Splitter:
     def __init__(self, str):
         self.str = str
-
-    def __iter__(self):
         self.index = 0
         self.pervious_index = 0
         self.stop_iter = False
+
+    def __iter__(self):
         return self
 
     def __next__(self):
