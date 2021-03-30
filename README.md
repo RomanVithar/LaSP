@@ -14,7 +14,7 @@
 
 - task 5b - is passed  
 
-- task 6 - is select(28.скобан, task about moving the boxes)
+- task 6 - is select(20 - cyberbox)
 
 # Task description
 

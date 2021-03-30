@@ -14,3 +14,4 @@ class Block:
     ZAPPER_L = 12
     SELECTOR_x = 13
     SELECTOR_O = 14
+    HERO = 15

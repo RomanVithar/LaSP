@@ -3,11 +3,15 @@ from cyberbox.game.Map import Map
 
 class Game:
     def __init__(self):
-        self.map = Map()
-        self._slider = map.get_slider()
+        self._map = Map()
+        self._hero = ()
+
+    def load_level(self, file):
+        self._map.fill(file)
+        self._hero = self._map.get_hero()
 
     def get_map(self):
-        pass
+        return self._map.get_map_blocks()
 
     def up(self):
         pass
