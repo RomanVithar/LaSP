@@ -1,29 +1,34 @@
-from cyberbox.common.Block import Block
-from cyberbox.game.blocks.Node import Node
+from task6.cyberbox.common.Dir import Dir
+from task6.cyberbox.common.Block import Block
+from task6.cyberbox.game.blocks.Node import Node
 
 
 class Map:
     def __init__(self):
         self._w = 17
-        self._hero = ()
         self._h = 12
+        self._hero = ()
         self._map = {}
+        self._pushers = []
         for i in range(self._h):
             for j in range(self._w):
-                new_node = Node((i, j))
-                if i-1 != -1:
-                    new_node.add_incident((i-1, j))
-                if i+1 != self._h:
-                    new_node.add_incident((i+1, j))
-                if j-1 != -1:
-                    new_node.add_incident((i, j-1))
-                if j+1 != self._w:
-                    new_node.add_incident((i, j+1))
-                self._map[(i, j)] = new_node
+                self._map[(i, j)] = Node((i, j))
+        for i in range(self._h):
+           for j in range(self._w):
+               if i-1 != -1:
+                   self._map[(i, j)].add_incident(Dir.UP, self._map[(i-1,j)])
+               if i+1 != self._h:
+                   self._map[(i, j)].add_incident(Dir.DOWN, self._map[(i+1,j)])
+               if j-1 != -1:
+                   self._map[(i, j)].add_incident(Dir.LEFT, self._map[(i,j-1)])
+               if j+1 != self._w:
+                   self._map[(i, j)].add_incident(Dir.RIGHT, self._map[(i,j+1)])
 
     # TODO: можно будет заменить чтобы файл был удобный для считывания а
     # TODO: карты делать в конструкторе но в связи с сложностью написания конструктора переношу на потом
     def fill(self, file):
+        self._hero = ()
+        self._pushers = []
         for i in range(self._h):
             self._map[(i, 0)].type = Block.WALL
             self._map[(i, self._w-1)].type = Block.WALL
@@ -35,8 +40,11 @@ class Map:
             array.append(line.rstrip('\n').split(' '))
         for i in range(1, self._h-1):
             for j in range(1, self._w-1):
+
                 if int(array[i-1][j-1]) == Block.HERO:
-                    self._hero = (i-1,j-1)
+                    self._hero = (i-1, j-1)
+                elif int(array[i-1][j-1]) == Block.:
+                    
                 self._map[(i, j)].type = int(array[i-1][j-1])
 
     def get_hero(self):

@@ -1,9 +1,9 @@
-from cyberbox.game.Map import Map
+from typing import Mapping
 
 
 class Game:
     def __init__(self):
-        self._map = Map()
+        self._map = Mapping()
         self._hero = ()
 
     def load_level(self, file):
