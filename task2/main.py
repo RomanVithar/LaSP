@@ -68,6 +68,7 @@ def main():
     parser.add_argument('--p')
     args = parser.parse_args()
     path = args.p
+
     if load_matrix(path) == None:
         path = 'matrix_data.txt'
     if load_matrix(path) == None:

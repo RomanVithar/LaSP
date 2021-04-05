@@ -1,6 +1,6 @@
-from task6.cyberbox.common.Dir import Dir
-from task6.cyberbox.common.Block import Block
-from task6.cyberbox.game.blocks.Node import Node
+from cyberbox.game.Node import Node
+from cyberbox.common.Dir import Dir
+from cyberbox.common.Block import Block
 
 
 class Map:
@@ -40,15 +40,24 @@ class Map:
             array.append(line.rstrip('\n').split(' '))
         for i in range(1, self._h-1):
             for j in range(1, self._w-1):
-
                 if int(array[i-1][j-1]) == Block.HERO:
                     self._hero = (i-1, j-1)
-                elif int(array[i-1][j-1]) == Block.:
-                    
-                self._map[(i, j)].type = int(array[i-1][j-1])
+                elif (int(array[i-1][j-1]) == Block.PUSHER_L or
+                 int(array[i-1][j-1]) == Block.PUSHER_R or
+                 int(array[i-1][j-1]) == Block.PUSHER_U or
+                 int(array[i-1][j-1]) == Block.PUSHER_D): 
+                    self._map[(i, j)].type = int(array[i-1][j-1])
+                    self._pushers.append(self._map[(i,j)])
+                else:
+                    self._map[(i, j)].type = int(array[i-1][j-1])
 
-    def get_hero(self):
-        return self._hero
+    @property
+    def hero(self):
+        return (self._hero[0]+1,self._hero[1]+1) 
+    
+    @property 
+    def pushers(self):
+        return self._pushers
 
     def get_map_blocks(self):
         arr = []
@@ -58,3 +67,6 @@ class Map:
                 row.append(self._map[(i, j)].type)
             arr.append(row)
         return arr
+
+    def get_node(self, coord):
+        return self._map[coord]
