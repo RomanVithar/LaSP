@@ -15,7 +15,8 @@ class GameScene(QWidget):
         self._block_w = 40
         self._block_h = 40
         self._game = Game()
-        self._game.load_level(open('resources/levels/level1', 'r'))
+        #TODO: generator next
+        self._game.restart(self._level_loader())
         self._init_sprites()
 
     def _init_sprites(self):
@@ -72,7 +73,6 @@ class GameScene(QWidget):
         arr = self._game.get_map()
         for i in range(1, len(arr)-1):
             for j in range(1, len(arr[i])-1):
-                # if arr[i][j] != Block.NOTHING:
                 pixmap = self._block_switcher[arr[i][j]]
                 self._labels[i][j].setPixmap(pixmap)
                 self._labels[i][j].setGeometry(
@@ -82,7 +82,7 @@ class GameScene(QWidget):
                                      i*self._block_h + self._block_h + 4, self._block_w, self._block_h)
 
     def keyPressEvent(self, event):
-        # h - 72; l - 76; j - 74; k - 75;
+        # h - 72; l - 76; j - 74; k - 75; r - 82
         if event.key() == 74:
             self._game.down()
         elif event.key() == 75:
@@ -91,10 +91,16 @@ class GameScene(QWidget):
             self._game.left()
         elif event.key() == 76:
             self._game.right()
+        elif event.key() == 82:
+            #TODO: generator next but this need use not next but current
+            self._game.restart(self._level_loader())
         elif event.key() == 68:
             # debug
             self.print_map()
 
+    #TODO: generator
+    def _level_loader(self):
+        return open('resources/levels/level1', 'r') 
 
 # debug
 

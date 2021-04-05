@@ -32,7 +32,7 @@ class Game:
             Block.SELECTOR_O: self._do_selector_o
         }
         self._zapper_dir = {
-            Block.ZAPPER_U: Dir.UP, 
+            Block.ZAPPER_U: Dir.UP,
             Block.ZAPPER_D: Dir.DOWN,
             Block.ZAPPER_R: Dir.RIGHT,
             Block.ZAPPER_L: Dir.LEFT
@@ -42,16 +42,13 @@ class Game:
     def hero(self):
         return self._hero
 
-    def load_level(self, file):
-        self._map.fill(file)
-        self._hero = self._map.hero
-        self._pushers = self._map.pushers
-
     def get_map(self):
         return self._map.get_map_blocks()
 
-    def restart(self):
-        pass
+    def restart(self, file):
+        self._map.fill(file)
+        self._hero = self._map.hero
+        self._pushers = self._map.pushers
 
     def up(self):
         self.move(self._map.get_node(self._hero), Dir.UP)
@@ -67,7 +64,7 @@ class Game:
 
     def move(self, current, dir):
         new_node = current.get_incident(dir)
-        #handler on zappers for hero
+        # handler on zappers for hero
         if self._zapper_dir.get(new_node.type) == dir and new_node.get_incident(dir).type == Block.NOTHING:
             self._hero = new_node.get_incident(dir).coord
         else:
@@ -76,7 +73,6 @@ class Game:
                 self._hero = new_node.coord
                 return
             if current.type == Block.SELECTOR_O and new_node.type == Block.NOTHING:
-                #это кастыль и перемещение ряда неправильное попробуй толкнуть блок из селектора_о 
                 self._hero = new_node.coord
                 return
             curr = new_node
@@ -88,16 +84,15 @@ class Game:
                 if curr.type == Block.NOTHING:
                     self._move_row(current, curr, dir)
                     return
-    
 
     def _move_row(self, start, finish, dir):
-        current = start
+        current = start.get_incident(dir)
         memory_type = current.type
         current.type = Block.NOTHING
-        self._hero = current.get_incident(dir).coord
+        self._hero = start.get_incident(dir).coord
         while current != finish:
             temp = current.get_incident(dir).type
-            current.get_incident(dir).type =  memory_type
+            current.get_incident(dir).type = memory_type
             memory_type = temp
             current = current.get_incident(dir)
 
@@ -130,7 +125,7 @@ class Game:
         if init_block.get_revers_incident(dir).coord == self._hero:
             node = Node((0, 0))
             node.type = Block.WALL
-            return node 
+            return node
         return init_block._incident[dir]
 
     def _do_selector_o(self, init_block, dir):

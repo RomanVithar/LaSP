@@ -23,7 +23,7 @@ class Map:
                    self._map[(i, j)].add_incident(Dir.LEFT, self._map[(i,j-1)])
                if j+1 != self._w:
                    self._map[(i, j)].add_incident(Dir.RIGHT, self._map[(i,j+1)])
-
+    
     # TODO: можно будет заменить чтобы файл был удобный для считывания а
     # TODO: карты делать в конструкторе но в связи с сложностью написания конструктора переношу на потом
     def fill(self, file):
@@ -42,6 +42,7 @@ class Map:
             for j in range(1, self._w-1):
                 if int(array[i-1][j-1]) == Block.HERO:
                     self._hero = (i-1, j-1)
+                    self._map[(i, j)].type = Block.NOTHING
                 elif (int(array[i-1][j-1]) == Block.PUSHER_L or
                  int(array[i-1][j-1]) == Block.PUSHER_R or
                  int(array[i-1][j-1]) == Block.PUSHER_U or
