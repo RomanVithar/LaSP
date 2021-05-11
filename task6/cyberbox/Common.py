@@ -15,3 +15,19 @@ class Block:
     SELECTOR_X = 13
     SELECTOR_O = 14
     HERO = 15
+
+class Dir:
+    LEFT = 0
+    RIGHT = 1
+    UP = 2
+    DOWN = 3
+
+class TypeBlock:
+    NOTHING = 0
+    WALL = 1
+    SLIDER= 2
+    PUSHER= 5
+    ZAPPER= 9
+    SELECTOR_X = 13
+    SELECTOR_O = 14
+    HERO = 15

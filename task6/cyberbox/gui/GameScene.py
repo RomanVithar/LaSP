@@ -1,11 +1,10 @@
+from cyberbox.Common import Block
+from cyberbox.game.Game import Game
 import sys
-
 from PyQt5 import QtGui
-from cyberbox.common.Block import Block
 from PyQt5.QtWidgets import QLabel, QWidget, QApplication
 from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap
 from PyQt5.QtCore import Qt
-from cyberbox.game.Game import Game
 
 
 class GameScene(QWidget):
@@ -15,12 +14,17 @@ class GameScene(QWidget):
         self._block_w = 40
         self._block_h = 40
         self._game = Game()
-        #TODO: generator next
-        self._game.restart(self._level_loader())
+        self._list_levels = [
+            'task6/resources/levels/level01',           
+            'task6/resources/levels/level02'           
+        ]
+        self._loader = self._level_loader()
+        self._current_lvl = next(self._loader)
+        self._game.restart(open(self._current_lvl, 'r'))
         self._init_sprites()
 
     def _init_sprites(self):
-        pixmap = QPixmap('resources/images/background.png')
+        pixmap = QPixmap('task6/resources/images/background.png')
         self.resize(pixmap.width(), pixmap.height())
         back_label = QLabel(self)
         back_label.setPixmap(pixmap)
@@ -35,27 +39,27 @@ class GameScene(QWidget):
                 sub.append(label)
             self._labels.append(sub)
         self._hero_label = QLabel(self)
-        pixmap = QPixmap('resources/images/hero.png')
+        pixmap = QPixmap('task6/resources/images/hero.png')
         self._hero_label.setPixmap(pixmap)
         self._hero_label.show()
 
         self._block_switcher = {
-            Block.NOTHING: QPixmap('resources/images/nothing.png'),
-            Block.WALL: QPixmap('resources/images/wall.png'),
-            Block.SLIDER_VERTICAL: QPixmap('resources/images/slider_vertical.png'),
-            Block.SLIDER_HORIZONTAL: QPixmap('resources/images/slider_horizontal.png'),
-            Block.SLIDER_ALL: QPixmap('resources/images/slider_all.png'),
-            Block.PUSHER_U: QPixmap('resources/images/pusher_u.png'),
-            Block.PUSHER_D: QPixmap('resources/images/pusher_d.png'),
-            Block.PUSHER_R: QPixmap('resources/images/pusher_r.png'),
-            Block.PUSHER_L: QPixmap('resources/images/pusher_l.png'),
-            Block.ZAPPER_U: QPixmap('resources/images/zapper_u.png'),
-            Block.ZAPPER_D: QPixmap('resources/images/zapper_d.png'),
-            Block.ZAPPER_R: QPixmap('resources/images/zapper_r.png'),
-            Block.ZAPPER_L: QPixmap('resources/images/zapper_l.png'),
-            Block.SELECTOR_X: QPixmap('resources/images/selector_x.png'),
-            Block.SELECTOR_O: QPixmap('resources/images/selector_o.png'),
-            Block.HERO: QPixmap('resources/images/hero.png'),
+            Block.NOTHING: QPixmap('task6/resources/images/nothing.png'),
+            Block.WALL: QPixmap('task6/resources/images/wall.png'),
+            Block.SLIDER_VERTICAL: QPixmap('task6/resources/images/slider_vertical.png'),
+            Block.SLIDER_HORIZONTAL: QPixmap('task6/resources/images/slider_horizontal.png'),
+            Block.SLIDER_ALL: QPixmap('task6/resources/images/slider_all.png'),
+            Block.PUSHER_U: QPixmap('task6/resources/images/pusher_u.png'),
+            Block.PUSHER_D: QPixmap('task6/resources/images/pusher_d.png'),
+            Block.PUSHER_R: QPixmap('task6/resources/images/pusher_r.png'),
+            Block.PUSHER_L: QPixmap('task6/resources/images/pusher_l.png'),
+            Block.ZAPPER_U: QPixmap('task6/resources/images/zapper_u.png'),
+            Block.ZAPPER_D: QPixmap('task6/resources/images/zapper_d.png'),
+            Block.ZAPPER_R: QPixmap('task6/resources/images/zapper_r.png'),
+            Block.ZAPPER_L: QPixmap('task6/resources/images/zapper_l.png'),
+            Block.SELECTOR_X: QPixmap('task6/resources/images/selector_x.png'),
+            Block.SELECTOR_O: QPixmap('task6/resources/images/selector_o.png'),
+            Block.HERO: QPixmap('task6/resources/images/hero.png'),
         }
 
     def initUI(self):
@@ -92,20 +96,10 @@ class GameScene(QWidget):
         elif event.key() == 76:
             self._game.right()
         elif event.key() == 82:
-            #TODO: generator next but this need use not next but current
-            self._game.restart(self._level_loader())
-        elif event.key() == 68:
-            # debug
-            self.print_map()
+            self._game.restart(open(self._current_lvl, 'r'))
 
-    #TODO: generator
     def _level_loader(self):
-        return open('resources/levels/level1', 'r') 
-
-# debug
-
-
-    def print_map(self):
-        arr = self._game.get_map()
-        for i in range(len(arr)):
-            print(arr[i])
+        i = 0
+        while i < len(self._list_levels):
+            yield self._list_levels[i]
+            i+=1

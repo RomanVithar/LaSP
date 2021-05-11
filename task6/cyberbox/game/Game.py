@@ -1,6 +1,5 @@
-from cyberbox.common.Block import Block
+from cyberbox.Common import *
 from cyberbox.game.Node import Node
-from cyberbox.common.Dir import Dir
 from cyberbox.game.Map import Map
 
 
@@ -10,33 +9,8 @@ class Game:
         self._hero = ()
         self._pushers = []
         self._switcher_type = {}
-        self._zapper_dir = {}
-        self._init_switchers()
-
-    def _init_switchers(self):
-        self._switcher_type = {
-            Block.NOTHING: self._do_nothing,
-            Block.WALL: self._do_wall,
-            Block.SLIDER_VERTICAL: self._do_slider_v,
-            Block.SLIDER_HORIZONTAL: self._do_slider_h,
-            Block.SLIDER_ALL: self._do_slider_a,
-            Block.PUSHER_U: self._do_wall,  # doing that only where not hero push that
-            Block.PUSHER_D: self._do_wall,
-            Block.PUSHER_R: self._do_wall,
-            Block.PUSHER_L: self._do_wall,
-            Block.ZAPPER_U: self._do_wall,
-            Block.ZAPPER_D: self._do_wall,
-            Block.ZAPPER_R: self._do_wall,
-            Block.ZAPPER_L: self._do_wall,
-            Block.SELECTOR_X: self._do_selector_x,
-            Block.SELECTOR_O: self._do_selector_o
-        }
-        self._zapper_dir = {
-            Block.ZAPPER_U: Dir.UP,
-            Block.ZAPPER_D: Dir.DOWN,
-            Block.ZAPPER_R: Dir.RIGHT,
-            Block.ZAPPER_L: Dir.LEFT
-        }
+        self._block_with_dir = {}
+        self._new_pusher = None
 
     @property
     def hero(self):
@@ -51,82 +25,81 @@ class Game:
         self._pushers = self._map.pushers
 
     def up(self):
-        self.move(self._map.get_node(self._hero), Dir.UP)
+        self._move(self._map.get_node(self._hero), Dir.UP)
+        self._handle_pushers()
 
     def down(self):
-        self.move(self._map.get_node(self._hero), Dir.DOWN)
+        self._move(self._map.get_node(self._hero), Dir.DOWN)
+        self._handle_pushers()
 
     def left(self):
-        self.move(self._map.get_node(self._hero), Dir.LEFT)
+        self._move(self._map.get_node(self._hero), Dir.LEFT)
+        self._handle_pushers()
 
     def right(self):
-        self.move(self._map.get_node(self._hero), Dir.RIGHT)
+        self._move(self._map.get_node(self._hero), Dir.RIGHT)
+        self._handle_pushers()
+    
+    def _handle_pushers(self):
+        new_pushers = []
+        for pusher in self._pushers:
+            crnt_pusher = pusher
+            for i in range(20):
+                self._new_pusher = crnt_pusher
+                self._move(crnt_pusher, crnt_pusher.directs[0],is_pusher=True)
+                crnt_pusher = self._new_pusher
+            new_pushers.append(crnt_pusher) 
+        self._pushers = new_pushers
+            
+    def _move(self, init_node, direct, is_pusher = False):
+        if init_node.type == TypeBlock.NOTHING and init_node.get_incident(direct).type == TypeBlock.ZAPPER and not is_pusher:
+            zapper = init_node.get_incident(direct)
+            if direct in zapper.directs:
+                inc_zapper = zapper.get_incident(direct)
+                if inc_zapper.type == TypeBlock.NOTHING or inc_zapper.type == TypeBlock.SELECTOR_O:
+                    self._tp_hero(inc_zapper.coord)
+                    return
+                else:
+                    return
+            else:
+                return
+        current = init_node
+        while True:
+            if direct in current.get_incident(direct).directs:
+                current = current.get_incident(direct)
+            else:
+                return
+            if self._hero == init_node.coord:
+                if current.type == TypeBlock.SELECTOR_O and self._hero == current.get_revers_incident(direct).coord:
+                    self._hero = current.coord
+                    return
+                if current.type == TypeBlock.SELECTOR_X and self._hero == current.get_revers_incident(direct).coord:
+                    return
+            if is_pusher:
+                if current.coord == self._hero:
+                    return
+            if current.type == TypeBlock.NOTHING:
+                self._move_row(init_node, current, direct, is_pusher)
+                return
+            
+            if current.type == TypeBlock.WALL or current.type == TypeBlock.ZAPPER or current.type == TypeBlock.PUSHER:
+                return
+                
+    def _move_row(self, start, finish, direct, is_pusher):
+        current = finish
+        while current.coord != start.coord:
+            current.type = current.get_revers_incident(direct).type
+            current.directs = current.get_revers_incident(direct).directs
+            current = current.get_revers_incident(direct)
 
-    def move(self, current, dir):
-        new_node = current.get_incident(dir)
-        # handler on zappers for hero
-        if self._zapper_dir.get(new_node.type) == dir and new_node.get_incident(dir).type == Block.NOTHING:
-            self._hero = new_node.get_incident(dir).coord
+        if not is_pusher:
+            self._hero = start.get_incident(direct).coord
         else:
-            # TODO: in adding there elif and write handler for other unusual blocks
-            if new_node.type == Block.SELECTOR_O:
-                self._hero = new_node.coord
-                return
-            if current.type == Block.SELECTOR_O and new_node.type == Block.NOTHING:
-                self._hero = new_node.coord
-                return
-            curr = new_node
-            while True:
-                handler = self._switcher_type[curr.type]
-                curr = handler(curr, dir)
-                if curr.type == Block.WALL:
-                    return
-                if curr.type == Block.NOTHING:
-                    self._move_row(current, curr, dir)
-                    return
-
-    def _move_row(self, start, finish, dir):
-        current = start.get_incident(dir)
-        memory_type = current.type
-        current.type = Block.NOTHING
-        self._hero = start.get_incident(dir).coord
-        while current != finish:
-            temp = current.get_incident(dir).type
-            current.get_incident(dir).type = memory_type
-            memory_type = temp
-            current = current.get_incident(dir)
-
-    def _do_nothing(self, init_block, dir):
-        return init_block
-
-    def _do_wall(self, init_block, dir):
-        node = Node((0, 0))
-        node.type = Block.WALL
-        return node
-
-    def _do_slider_v(self, init_block, dir):
-        if dir == Dir.UP or dir == Dir.DOWN:
-            return init_block._incident[dir]
-        node = Node((0, 0))
-        node.type = Block.WALL
-        return node
-
-    def _do_slider_h(self, init_block, dir):
-        if dir == Dir.LEFT or dir == Dir.RIGHT:
-            return init_block._incident[dir]
-        node = Node((0, 0))
-        node.type = Block.WALL
-        return node
-
-    def _do_slider_a(self, init_block, dir):
-        return init_block._incident[dir]
-
-    def _do_selector_x(self, init_block, dir):
-        if init_block.get_revers_incident(dir).coord == self._hero:
-            node = Node((0, 0))
-            node.type = Block.WALL
-            return node
-        return init_block._incident[dir]
-
-    def _do_selector_o(self, init_block, dir):
-        return init_block._incident[dir]
+            self._new_pusher = start.get_incident(direct)
+            start.type = TypeBlock.NOTHING
+            start.directs = (Dir.UP, Dir.DOWN, Dir.LEFT, Dir.RIGHT)
+        if current.type == TypeBlock.SELECTOR_O:
+            current.get_incident(direct).type = TypeBlock.NOTHING
+            
+    def _tp_hero(self, to_coord):
+        self._hero = to_coord
