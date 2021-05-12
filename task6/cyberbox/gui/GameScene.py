@@ -14,21 +14,21 @@ class GameScene(QWidget):
         self._block_w = 40
         self._block_h = 40
         self._game = Game()
-        self._list_levels = [
-            'task6/resources/levels/level01',           
-            'task6/resources/levels/level02'           
-        ]
-        self._loader = self._level_loader()
-        self._current_lvl = next(self._loader)
-        self._game.restart(open(self._current_lvl, 'r'))
+        self._game.restart()
+        self._level_numb = self._game.level_number[0]
+        self._level_name = self._game.level_number[1] 
+        self._level_live = self._game.live_number
         self._init_sprites()
 
     def _init_sprites(self):
+        self._level_label = QLabel(self)
+        self._level_label.setText("<b>Room {}<b><br><b>{}<b>".format(self._level_numb, self._level_name))
+        self._label_live_number = QLabel(self)
+        self._label_live_number.setText("<b>Attempts remaining: {}<b>".format(self._level_live))
         pixmap = QPixmap('task6/resources/images/background.png')
         self.resize(pixmap.width(), pixmap.height())
         back_label = QLabel(self)
         back_label.setPixmap(pixmap)
-        back_label.show()
         self._labels = list()
         arr = self._game.get_map()
         for i in range(len(arr)):
@@ -41,7 +41,20 @@ class GameScene(QWidget):
         self._hero_label = QLabel(self)
         pixmap = QPixmap('task6/resources/images/hero.png')
         self._hero_label.setPixmap(pixmap)
+        back_label.show()
+        help_label = QLabel(self)
+        help_label.setText('<b>Arrows to move.<b><br><b>R to retry this level.<b>')
+        help_label.move(385,510)
+        help_label.show()
+        help_label.raise_()
+        self._level_label.show()
+        self._label_live_number.show()
+        self._label_live_number.move(133, 510)
+        self._level_label.raise_()
+        self._level_label.move(40, 45)
+        self._label_live_number.raise_()
         self._hero_label.show()
+
 
         self._block_switcher = {
             Block.NOTHING: QPixmap('task6/resources/images/nothing.png'),
@@ -74,6 +87,9 @@ class GameScene(QWidget):
         qp.end()
 
     def repaint(self):
+        if self._game.level_number != (self._level_numb, self._level_name):
+            self._level_numb, self._level_name = self._game.level_number
+            self._level_label.setText("<b>Room {}\n{}<b>".format(self._level_numb, self._level_name))
         arr = self._game.get_map()
         for i in range(1, len(arr)-1):
             for j in range(1, len(arr[i])-1):
@@ -96,10 +112,6 @@ class GameScene(QWidget):
         elif event.key() == 76:
             self._game.right()
         elif event.key() == 82:
-            self._game.restart(open(self._current_lvl, 'r'))
-
-    def _level_loader(self):
-        i = 0
-        while i < len(self._list_levels):
-            yield self._list_levels[i]
-            i+=1
+            self._game.restart()
+            self._level_live = self._game.live_number
+            self._label_live_number.setText(("<b>Attempts remaining: {}<b>".format(self._level_live)))
