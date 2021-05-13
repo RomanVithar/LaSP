@@ -1,9 +1,10 @@
+from PyQt5 import QtCore
 from cyberbox.Common import Block
 from cyberbox.game.Game import Game
 import sys
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QLabel, QWidget, QApplication
-from PyQt5.QtGui import QPainter, QColor, QFont, QPixmap
+from PyQt5.QtWidgets import QAbstractItemView, QLabel, QTableWidget, QTableWidgetItem, QWidget, QApplication
+from PyQt5.QtGui import QIcon, QPainter, QColor, QFont, QPixmap
 from PyQt5.QtCore import Qt
 
 
@@ -30,10 +31,28 @@ class GameScene(QWidget):
         back_label = QLabel(self)
         back_label.setPixmap(pixmap)
         self._labels = list()
+        # somewhere there should be a table instead of labels
         arr = self._game.get_map()
+        self._map_table = QTableWidget(self)
+        self._map_table.setColumnCount(len(arr[0])-2) 
+        self._map_table.setRowCount(len(arr)-2) 
+        self._map_table.verticalHeader().hide()
+        self._map_table.horizontalHeader().hide()
+        self._map_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self._map_table.setSelectionMode(QAbstractItemView.NoSelection)
+        self._map_table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._map_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self._map_table.setShowGrid(Qt.NoPen)
+        self._map_table.resizeColumnsToContents()
+        self._map_table.setGeometry(5,80,612,400)
+        self.setFocus()
+        #-----------------------------------
         for i in range(len(arr)):
             sub = list()
             for j in range(len(arr[i])):
+                image = QLabel()
+                image.setPixmap(QPixmap('task6/resources/images/nothing.png'))
+                self._map_table.setCellWidget(i,j,image)
                 label = QLabel(self)
                 label.show()
                 sub.append(label)
@@ -53,7 +72,10 @@ class GameScene(QWidget):
         self._level_label.raise_()
         self._level_label.move(40, 45)
         self._label_live_number.raise_()
+        self._map_table.show()
+        self._map_table.raise_()
         self._hero_label.show()
+        self._hero_label.raise_()
 
 
         self._block_switcher = {
@@ -75,10 +97,33 @@ class GameScene(QWidget):
             Block.HERO: QPixmap('task6/resources/images/hero.png'),
         }
 
+
+        self._block_switcher2 = {
+            Block.NOTHING: 'task6/resources/images/nothing.png',
+            Block.WALL: 'task6/resources/images/wall.png',
+            Block.SLIDER_VERTICAL: 'task6/resources/images/slider_vertical.png',
+            Block.SLIDER_HORIZONTAL: 'task6/resources/images/slider_horizontal.png',
+            Block.SLIDER_ALL: 'task6/resources/images/slider_all.png',
+            Block.PUSHER_U: 'task6/resources/images/pusher_u.png',
+            Block.PUSHER_D: 'task6/resources/images/pusher_d.png',
+            Block.PUSHER_R: 'task6/resources/images/pusher_r.png',
+            Block.PUSHER_L: 'task6/resources/images/pusher_l.png',
+            Block.ZAPPER_U: 'task6/resources/images/zapper_u.png',
+            Block.ZAPPER_D: 'task6/resources/images/zapper_d.png',
+            Block.ZAPPER_R: 'task6/resources/images/zapper_r.png',
+            Block.ZAPPER_L: 'task6/resources/images/zapper_l.png',
+            Block.SELECTOR_X: 'task6/resources/images/selector_x.png',
+            Block.SELECTOR_O: 'task6/resources/images/selector_o.png',
+            Block.HERO: 'task6/resources/images/hero.png',
+        }
+
+
+
     def initUI(self):
         self.setGeometry(100, 100, 880, 570)
         self.setWindowTitle('кибербокс')
         self.show()
+
 
     def paintEvent(self, event):
         qp = QPainter()
@@ -94,6 +139,9 @@ class GameScene(QWidget):
         for i in range(1, len(arr)-1):
             for j in range(1, len(arr[i])-1):
                 pixmap = self._block_switcher[arr[i][j]]
+                image = QLabel()
+                image.setPixmap(pixmap)
+                self._map_table.setCellWidget(i-1,j-1,image)
                 self._labels[i][j].setPixmap(pixmap)
                 self._labels[i][j].setGeometry(
                     j*self._block_w - self._block_w + 8, i*self._block_h + self._block_h + 4, self._block_w, self._block_h)
