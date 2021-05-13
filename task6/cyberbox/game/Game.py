@@ -90,6 +90,7 @@ class Game:
     def level_number(self):
         return (self._level_number, self._level_names[self._level_number])
 
+
     def _handle_pushers(self):
         for j in range(3):
             new_pushers = []
@@ -170,4 +171,5 @@ class Game:
         if self._hero == (1,8):
             self._current_lvl = next(self._loader)
             self._level_number += 1
+            self._live_number+=1
             self.restart()
