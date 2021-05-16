@@ -1,5 +1,6 @@
 import sqlite3
-from sqlite3.dbapi2 import Cursor
+import sys
+from sqlite3.dbapi2 import Cursor, Error
 from flask import Flask
 from flask.templating import render_template
 from flask.globals import request
@@ -15,6 +16,8 @@ class Base:
 class Data:
     def __init__(self, base_names):
         self.bases =  []
+        self.selected_base = None
+        self.output = None
         for base_name in base_names:
             self.bases.append(Base(base_name)) 
 
@@ -55,7 +58,28 @@ def get_tables():
             if data.bases[i].name == base_name:
                 data.bases[i].tables = [table[0] for table in list] 
                 break
+    data.selected_base = base_name
     return render_template('index.html', data=data)
+
+
+
+@app.route('/execute_request', methods=['POST', 'GET'])
+def execute_request():
+    data = Data([os.path.splitext(filename)[0] for filename in os.listdir(path_to_bases)])
+    if request.form['enabled'] != 'no':
+        data.selected_base = request.form['enabled']
+        cursor = connect_base(request.form['enabled']).cursor()
+        try:
+            cursor.execute(request.form['request'])
+            data.output='Success! {}'.format(cursor.fetchall())
+        except:
+            data.output='Error! {}'.format(sys.exc_info()[0])
+    return render_template('index.html', data=data)
+
+
+@app.route('/select_table', methods=['POST', 'GET'])
+def select_table():
+    pass
 
 
 if __name__ == '__main__':

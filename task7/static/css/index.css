@@ -171,6 +171,7 @@ button::after {
 
 .base-name-form {
     display: inline-block;
+    margin-top: 8%;
 }
 
 .tables-list button{
@@ -201,4 +202,25 @@ textarea {
     font-weight: bold;
     position: absolute;
     bottom: 0;
+}
+
+.btn-submit {
+    color: black;
+    width: 100%;
+}
+
+.btn-close {
+    float: right;
+}
+
+.btn-close button{
+    color: black;
+}
+
+.head-input{
+    width: 100%;
+}
+
+.head-input div{
+    display: inline-block;
 }

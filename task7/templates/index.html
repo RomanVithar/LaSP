@@ -22,8 +22,16 @@
 </head>
 
 <body>
-    <textarea id="story" name="story" rows="5" cols="33"></textarea>
-    <button>submit</button>
+    {%if data.selected_base != None%}
+    <form action="/execute_request" method="POST">
+        <div class="head-input">
+            <div><h3>{{data.selected_base}}</h3></div>
+            <div class="btn-close"><button class="btn" name="enabled" value="no">close</button></div>
+        </div>
+        <textarea id="story" name="request" name="story" rows="5" cols="33"></textarea>
+        <button type="submit" name="enabled" value="{{data.selected_base}}" class="btn btn-submit">submit</button>
+    </form>
+    {%endif%}
     <!-- / Begin Body -->
     <div class='swanky'>
         <!-- / Introduction Block -->
@@ -51,7 +59,9 @@
         </form>
     </div>
     <div class="output">
-        fdkgshdfjhkldfjshg
+        {%if data.output != None%}
+        <p>{{data.output}}</p>
+        {%endif%}
     </div>
 </body>
 
