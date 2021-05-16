@@ -14,7 +14,7 @@ class Game:
         self._level_number = 1
         self._new_pusher = None
         self._list_levels = [
-            'task6/resources/levels/level01',           
+            'task6/resources/levels/level09',           
             'task6/resources/levels/level02',           
             'task6/resources/levels/level03',           
             'task6/resources/levels/level04',           
