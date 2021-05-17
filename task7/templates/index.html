@@ -19,13 +19,17 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
     </script>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </head>
 
 <body>
     {%if data.selected_base != None%}
     <form action="/execute_request" method="POST">
         <div class="head-input">
-            <div><h3>{{data.selected_base}}</h3></div>
+            <div>
+                <h3>{{data.selected_base}}</h3>
+            </div>
             <div class="btn-close"><button class="btn" name="enabled" value="no">close</button></div>
         </div>
         <textarea id="story" name="request" name="story" rows="5" cols="33"></textarea>
@@ -44,21 +48,44 @@
                     base</button>
             </form>
         </form>
-        <form action="/get_tables" class="base-name-form" method="POST">
+        <div class="base-name-form">
             <div class="list-group base-list">
                 {%for base in data.bases%}
-                <button type="submit" class="btn btn-dark" name="btnGetTables"
-                    value="{{base.name}}">{{base.name}}</button>
+                <div id="wrapper1">
+                    <button type="submit" class="btn btn-dark"
+                        onclick="ds('wrapper1','{{base.name}}', '');">{{base.name}}</button>
+                </div>
                 <div class="list-group tables-list">
                     {%for table in base.tables %}
-                    <button class="btn">{{table}}</button>
+                    <div id="wrapper2">
+                        <button type="submit" class="btn"
+                            onclick="ds('wrapper2', '{{base.name}}','{{table}}');">{{table}}</button>
+                    </div>
                     {%endfor%}
                 </div>
                 {%endfor%}
             </div>
-        </form>
+        </div>
     </div>
     <div class="output">
+        {%if data.table != None%}
+        <table class="table table-striped table-bordered table-hover table-condensed">
+            <tr>                    
+                <th>№</th>
+            {%for col in data.table.head %}
+                <th>{{col[1]}}</th>
+            {%endfor%}
+            </tr>
+            {%for row in data.table.body%}
+            <tr>
+                <td>{{loop.index}}</td>
+                {%for item in row%}
+                    <td>{{item}}</td>
+                {%endfor%}
+            </tr>
+            {%endfor%}
+        </table>
+        {%endif%}
         {%if data.output != None%}
         <p>{{data.output}}</p>
         {%endif%}

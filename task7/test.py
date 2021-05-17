@@ -21,10 +21,17 @@ cursor = conn.cursor()
                 #    publisher text, media_type text)
             #    """)
 
-cursor.execute("""CREATE TABLE x 
-                  (title text, release_date text,
-                   publisher text, media_type text)
-               """)
+#cursor.execute("""CREATE TABLE x1 
+#                  (title text, release_date int 
+#                   )
+#               """)
 
-cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
-print(cursor.fetchall())
+#cursor.execute("insert into x1(title, release_date) values('bbb',2)")
+#conn.commit()
+#cursor.execute("""SELECT * FROM x1""")
+#records = cursor.fetchall()
+
+cursor.execute("""pragma table_info(x1)""")
+records = cursor.fetchall()
+for row in records:
+    print(row)

@@ -13,10 +13,19 @@ class Base:
         self.tables = []  
 
 
+class Table:
+    def __init__(self, head, body):
+        self.head = head
+        self.body = body
+        pass
+
+
 class Data:
     def __init__(self, base_names):
         self.bases =  []
         self.selected_base = None
+        self.selected_table = None
+        self.table = None
         self.output = None
         for base_name in base_names:
             self.bases.append(Base(base_name)) 
@@ -58,7 +67,7 @@ def get_tables():
             if data.bases[i].name == base_name:
                 data.bases[i].tables = [table[0] for table in list] 
                 break
-    data.selected_base = base_name
+        data.selected_base = base_name
     return render_template('index.html', data=data)
 
 
@@ -68,18 +77,36 @@ def execute_request():
     data = Data([os.path.splitext(filename)[0] for filename in os.listdir(path_to_bases)])
     if request.form['enabled'] != 'no':
         data.selected_base = request.form['enabled']
-        cursor = connect_base(request.form['enabled']).cursor()
+        conn = connect_base(request.form['enabled'])
+        cursor = conn.cursor()
         try:
             cursor.execute(request.form['request'])
+            conn.commit()
             data.output='Success! {}'.format(cursor.fetchall())
-        except:
-            data.output='Error! {}'.format(sys.exc_info()[0])
+        except Exception as err:
+            data.output='Error! {}'.format(err)
     return render_template('index.html', data=data)
 
 
-@app.route('/select_table', methods=['POST', 'GET'])
-def select_table():
-    pass
+@app.route('/show_table', methods=['POST', 'GET'])
+def show_table():
+    data = Data([os.path.splitext(filename)[0] for filename in os.listdir(path_to_bases)])
+    if request.method == "POST":
+        base_name = request.form['btnGetTables']
+        cursor = connect_base(base_name).cursor()
+        list = cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        for i in range(len(data.bases)):
+            if data.bases[i].name == base_name:
+                data.bases[i].tables = [table[0] for table in list] 
+                break
+        data.selected_base = base_name
+        table_name = request.form['submitTable']
+        cursor.execute("""pragma table_info({})""".format(table_name))
+        head= cursor.fetchall()
+        cursor.execute("select * from {}".format(table_name))
+        body = cursor.fetchall()
+        data.table=Table(head,body)
+    return render_template('index.html', data=data)
 
 
 if __name__ == '__main__':
