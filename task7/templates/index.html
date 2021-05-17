@@ -32,7 +32,11 @@
             </div>
             <div class="btn-close"><button class="btn" name="enabled" value="no">close</button></div>
         </div>
-        <textarea id="story" name="request" name="story" rows="5" cols="33"></textarea>
+        <textarea id="story" class="ta-input" name="request" name="story" rows="5" cols="172">
+            {%if data.command != None%}
+            {{data.command}}
+            {%endif%}
+        </textarea>
         <button type="submit" name="enabled" value="{{data.selected_base}}" class="btn btn-submit">submit</button>
     </form>
     {%endif%}
@@ -40,6 +44,7 @@
     <div class='swanky'>
         <!-- / Introduction Block -->
         <form action="/index" class='swanky_title' method="POST">
+
             <h1>SqliteAdmin</h1>
             <p>Click on the button to add a new database. If the base exists, select it from the list.</p>
             <form method="POST">
@@ -51,7 +56,8 @@
         <div class="base-name-form">
             <div class="list-group base-list">
                 {%for base in data.bases%}
-                <div id="wrapper1">
+                <div class="wrapper1" id="wrapper1">
+                    <button type="submit" id = "delete" class="btn btn-dark btn-del" onclick="ds('delete','{{base.name}}', '');">-</button>
                     <button type="submit" class="btn btn-dark"
                         onclick="ds('wrapper1','{{base.name}}', '');">{{base.name}}</button>
                 </div>
@@ -68,19 +74,24 @@
         </div>
     </div>
     <div class="output">
+        {%if data.selected_table != None%}
+        <h5>{{data.selected_table}}</h5>
+        {%endif%}
         {%if data.table != None%}
         <table class="table table-striped table-bordered table-hover table-condensed">
-            <tr>                    
+            <tr>
+                {%if data.table.head != []%}
                 <th>№</th>
-            {%for col in data.table.head %}
+                {%endif%}
+                {%for col in data.table.head %}
                 <th>{{col[1]}}</th>
-            {%endfor%}
+                {%endfor%}
             </tr>
             {%for row in data.table.body%}
             <tr>
                 <td>{{loop.index}}</td>
                 {%for item in row%}
-                    <td>{{item}}</td>
+                <td>{{item}}</td>
                 {%endfor%}
             </tr>
             {%endfor%}

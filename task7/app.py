@@ -27,6 +27,7 @@ class Data:
         self.selected_table = None
         self.table = None
         self.output = None
+        self.command = None
         for base_name in base_names:
             self.bases.append(Base(base_name)) 
 
@@ -44,6 +45,10 @@ def validate_base_name(name):
 
 def connect_base(base_name):
     return sqlite3.connect(path_to_bases+base_name+'.sqlite')
+
+
+def delete_base_for_name(base_name):
+    os.remove(path_to_bases+base_name+'.sqlite')
 
 
 @app.route('/index', methods=['POST','GET'])
@@ -79,12 +84,16 @@ def execute_request():
         data.selected_base = request.form['enabled']
         conn = connect_base(request.form['enabled'])
         cursor = conn.cursor()
+        command = request.form['request']
         try:
-            cursor.execute(request.form['request'])
+            cursor.execute(command)
+            data.table = Table([], cursor.fetchall())
             conn.commit()
-            data.output='Success! {}'.format(cursor.fetchall())
+            data.output='Success! {}'.format('!!')
         except Exception as err:
             data.output='Error! {}'.format(err)
+
+        data.command = command
     return render_template('index.html', data=data)
 
 
@@ -101,11 +110,21 @@ def show_table():
                 break
         data.selected_base = base_name
         table_name = request.form['submitTable']
+        data.selected_table = table_name
         cursor.execute("""pragma table_info({})""".format(table_name))
         head= cursor.fetchall()
         cursor.execute("select * from {}".format(table_name))
         body = cursor.fetchall()
         data.table=Table(head,body)
+    return render_template('index.html', data=data)
+
+
+@app.route('/delete_base', methods=['POST', 'GET'])
+def delete_base():
+    if request.method == "POST":
+        base_name = request.form['base']
+        delete_base_for_name(base_name)
+    data = Data([os.path.splitext(filename)[0] for filename in os.listdir(path_to_bases)])
     return render_template('index.html', data=data)
 
 

@@ -124,7 +124,7 @@ button::after {
 .thick:hover {
     color: #fff;
     font-weight: 700;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .thick::before {
@@ -153,19 +153,20 @@ button::after {
 
 .base-list {
     padding: 10%;
+    width: 250px;
 }
 
-.base-list button{
+.base-list button {
     width: 190px;
 }
 
-.input-base[type=text]{
+.input-base[type=text] {
     font-family: 'Helvetica Neue', Helvetica, Tahoma, Arial, sans-serif;
     background: transparent;
     color: black;
 }
 
-.input-base[type="text"]::placeholder{
+.input-base[type="text"]::placeholder {
     color: black;
 }
 
@@ -175,9 +176,14 @@ button::after {
     margin-top: 8%;
 }
 
-.tables-list button{
+.tables-list {
+    margin-left: 34px;
+}
+
+.tables-list button {
     color: black;
 }
+
 /* textarea */
 textarea {
     font-family: 'Helvetica Neue', Helvetica, Tahoma, Arial, sans-serif;
@@ -188,6 +194,7 @@ textarea {
     font-size: .8rem;
     letter-spacing: 1px;
 }
+
 textarea {
     padding-right: 100%;
     padding: 50%px;
@@ -198,6 +205,9 @@ textarea {
 }
 
 .output {
+    overflow: scroll;
+    height: 20%;
+    width: 100%;
     font-size: .8rem;
     letter-spacing: 1px;
     font-weight: bold;
@@ -214,18 +224,35 @@ textarea {
     float: right;
 }
 
-.btn-close button{
+.btn-close button {
     color: black;
 }
 
-.head-input{
+.head-input {
     width: 100%;
 }
 
-.head-input div{
+.head-input div {
     display: inline-block;
 }
 
 .hide {
     display: none;
+}
+
+.ta-input {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.wrapper1 button{
+    display: inline-block;
+}
+
+.btn-del {
+    padding: 0;
+    margin: 0;
+    width: 30px;
+    max-width: 30px;
 }
