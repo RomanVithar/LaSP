@@ -57,7 +57,7 @@
             <div class="list-group base-list">
                 {%for base in data.bases%}
                 <div class="wrapper1" id="wrapper1">
-                    <button type="submit" id = "delete" class="btn btn-dark btn-del" onclick="ds('delete','{{base.name}}', '');">-</button>
+                    <button type="submit" id = "delete" class="btn btn-dark btn-del" title="Delete base" onclick="ds('delete','{{base.name}}', '');">-</button>
                     <button type="submit" class="btn btn-dark"
                         onclick="ds('wrapper1','{{base.name}}', '');">{{base.name}}</button>
                 </div>
